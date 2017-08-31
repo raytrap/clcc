@@ -10,6 +10,12 @@ tNvCliCompileLogFree pNvCliCompileLogFree;
 tNvCliCompiledProgramFree pNvCliCompiledProgramFree;
 int loaded = 0;
 
+#ifdef _WIN64
+const char *compiler_path = "nvcompiler.dll";
+#else
+const char *compiler_path = "nvcompiler32.dll";
+#endif
+
 int unload_compiler(void)
 {
     if (!loaded)
@@ -40,11 +46,7 @@ void print_error()
         (LPSTR)&message,
         0,
         NULL);
-#ifdef _WIN64
-    fprintf(stderr, "nvcompiler.dll: %s\n", message);
-#else
-    fprintf(stderr, "nvcompiler32.dll: %s\n", message);
-#endif
+    fprintf(stderr, "%s: %s\n", compiler_path, message);
     LocalFree(message);
 }
 
@@ -55,11 +57,7 @@ void load_compiler()
         return;
     }
 
-#ifdef _WIN64
-    nvcompiler = LoadLibrary("nvcompiler.dll");
-#else 
-    nvcompiler = LoadLibrary("nvcompiler32.dll");
-#endif
+    nvcompiler = LoadLibrary(compiler_path);
     if (nvcompiler == NULL)
     {
         print_error();

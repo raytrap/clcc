@@ -1,3 +1,4 @@
+extern const char *compiler_path;
 int NvCliCompileProgram(const char **sourceStrings, unsigned int sourceStringsCount, const size_t *sourceStringsLengths, const char *compilerOptions, char **compileLogRet, char **compiledProgramRet);
 void NvCliCompileLogFree(const char *compileLog);
 void NvCliCompiledProgramFree(const char *compiledProgram);

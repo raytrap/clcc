@@ -7,6 +7,12 @@
 
 #include "compiler.h"
 
+
+void print_usage() {
+    printf("Usage: clcc [-l compiler-path] [\"compiler-options\"] input.cl output.ptx\n");
+    exit(EXIT_SUCCESS);
+}
+
 int main(int argc, char **argv)
 {
 	// Some test arguments:
@@ -16,7 +22,7 @@ int main(int argc, char **argv)
     // const size_t lengths[] = { sizeof(source) };
 
     char *source;
-    char *options;
+    char *options = "";
     const char *strings[1];
     size_t lengths[1];
     const unsigned int count = 1;
@@ -30,20 +36,26 @@ int main(int argc, char **argv)
     struct stat sourceStat;
     size_t size;
 
-    if (argc < 3 || argc > 4)
-    {
-        printf("Usage: clcc [\"compiler-options\"] input.cl output.ptx\n");
-        exit(EXIT_SUCCESS);
+
+    if (argc >= 3) {
+        int args_left = argc;
+        if (strcmp(argv[1], "-l") == 0) {
+            compiler_path = argv[2];
+            args_left -= 2;
+        }
+        if (args_left == 4) {
+            options = argv[argc - 3];
+        }
+        if (args_left == 3 || args_left == 4) {
+            sourceFilename = argv[argc - 2];
+            binaryFilename = argv[argc - 1];
+        }
+        else {
+            print_usage();
+        }
     }
-    sourceFilename = argv[argc - 2];
-    binaryFilename = argv[argc - 1];
-    if (argc > 3)
-    {
-        options = argv[1];
-    }
-    else
-    {
-        options = "";
+    else {
+        print_usage();
     }
 
     sourceFile = fopen(sourceFilename, "rb");
